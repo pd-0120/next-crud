@@ -8,7 +8,7 @@ import {
 	TextField,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React from "react";
+import React , { useState } from "react";
 import axios from 'axios'
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -22,23 +22,28 @@ const validationSceama = Yup.object().shape({
 
 export default function TaskForm(props) {
 	const router = useRouter();
+	const [isLoading, setIsLoading] = useState(false)
 	const { task } = props
 	
 	const handleSubmit = (fields, props) => {
+		setIsLoading(true);
 		if(task) {
-			axios.put(`/api/tasks/${task.id}/update`, fields);
+			axios
+				.put(`/api/tasks/${task.id}/update`, fields)
+				.then(() => {setIsLoading(false);router.push("list-tasks");});
 		} else {
-			axios.post("/api/tasks/create", fields);
+			axios
+				.post("/api/tasks/create", fields)
+				.then(() => {setIsLoading(false);router.push("list-tasks");});
 		}
-		router.push('list-tasks')
 	}
 	return (
 		<Box mt={2}>
 			<Formik
 				initialValues={{
-					name: task ? task.name : null,
-					description: task ? task.description : null,
-					status: task ? task.status : null,
+					name: task ? task.name : '',
+					description: task ? task.description : '',
+					status: task ? task.status : '',
 				}}
 				validationSchema={validationSceama}
 				onSubmit={(values, props) => {
@@ -100,7 +105,11 @@ export default function TaskForm(props) {
 							</Grid>
 							<Grid item sm={6}></Grid>
 							<Grid item sm={6}>
-								<Button variant={"contained"} type={"submit"}>
+								<Button
+									variant={"contained"}
+									type={"submit"}
+									disabled={isLoading}
+								>
 									Submit
 								</Button>
 							</Grid>

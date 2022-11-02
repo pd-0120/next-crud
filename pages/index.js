@@ -1,3 +1,4 @@
+import ListTask from './list-tasks'
 export default function Home() {
-	return <></>;
+	return <ListTask/>;
 }
