@@ -1,7 +1,16 @@
+import NextCors from "nextjs-cors";
 import prisma from "../../../../lib/prisma";
 
 export default async function handle(req, res) {
-    if (req.method === "DELETE") {
+
+	await NextCors(req, res, {
+		// Options
+		methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+		origin: "*",
+		optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+	});
+
+	if (req.method === "DELETE") {
 		try {
 			await prisma.posts.delete({
 				where: {
